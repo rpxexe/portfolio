@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
@@ -16,6 +16,8 @@ import { PROFILE } from "@/data/profile";
 import { FEATURED_PROJECTS, PROJECTS } from "@/data/projects";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 const MARQUEE_STACK = [
   "TypeScript",
@@ -104,13 +106,14 @@ export function HomeSections() {
   const kineticTopRef = useRef<HTMLDivElement>(null);
   const kineticBotRef = useRef<HTMLDivElement>(null);
   const horizSectionRef = useRef<HTMLElement>(null);
+  const horizPinRef = useRef<HTMLDivElement>(null);
   const horizTrackRef = useRef<HTMLDivElement>(null);
   const auditTrailRef = useRef<HTMLDivElement>(null);
   const auditSpineRef = useRef<HTMLSpanElement>(null);
 
   const hoveredProject = PROJECTS.find((p) => p.slug === hoveredSlug && p.screenshotPath);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const mm = gsap.matchMedia();
 
     // ScrollTrigger kinetic typography + audit spine
@@ -212,13 +215,14 @@ export function HomeSections() {
     // Desktop-only Pinned Horizontal Gallery + Multi-Plane Parallax
     mm.add("(prefers-reduced-motion: no-preference) and (min-width: 60rem)", () => {
       const section = horizSectionRef.current;
+      const pinTarget = horizPinRef.current;
       const track = horizTrackRef.current;
       let cleanupHorizScrollEnd: (() => void) | undefined;
 
       const ctx = gsap.context(() => {
-        if (section && track) {
+        if (section && pinTarget && track) {
           const getScrollAmount = () => {
-            const innerW = (track.parentElement?.clientWidth ?? section.clientWidth) - 128;
+            const innerW = (track.parentElement?.clientWidth ?? pinTarget.clientWidth) - 128;
             return Math.max(0, track.scrollWidth - innerW);
           };
           const trackSkewTo = gsap.quickTo(track, "skewX", { duration: 0.32, ease: "power3.out" });
@@ -228,7 +232,7 @@ export function HomeSections() {
             x: () => -getScrollAmount(),
             ease: "none",
             scrollTrigger: {
-              trigger: section,
+              trigger: pinTarget,
               start: "top 69px",
               end: () => `+=${getScrollAmount()}`,
               pin: true,
@@ -256,7 +260,7 @@ export function HomeSections() {
                 y: -offset,
                 ease: "none",
                 scrollTrigger: {
-                  trigger: section,
+                  trigger: pinTarget,
                   start: "top 69px",
                   end: () => `+=${getScrollAmount()}`,
                   scrub: 0.6,
@@ -654,40 +658,42 @@ export function HomeSections() {
 
       {/* 03: Pinned Horizontal Deployed Interfaces */}
       <section ref={horizSectionRef} className="horiz-section" aria-labelledby="showcase-heading">
-        <div className="container mb-6">
-          <div className="section-head-split" style={{ marginBottom: 0 }}>
-            <h2 id="showcase-heading">..live captures</h2>
-            <p className="lead text-ink-2">Scroll to pan desktop and web deployments.</p>
+        <div ref={horizPinRef} className="horiz-pin">
+          <div className="container mb-6">
+            <div className="section-head-split" style={{ marginBottom: 0 }}>
+              <h2 id="showcase-heading">..live captures</h2>
+              <p className="lead text-ink-2">Scroll to pan desktop and web deployments.</p>
+            </div>
           </div>
-        </div>
 
-        <div className="container">
-          <div ref={horizTrackRef} className="horiz-track">
-            {SHOWCASE_CARDS.map((project) => (
-              <div key={project.slug} data-horiz-parallax className="horiz-card-wrap">
-                <WobbleCard as="article" tilt={6} wobble={1.15} className="horiz-card">
-                  <figure className="capture-frame">
-                    <Image
-                      src={project.screenshotPath ?? "/projects/arcix-home-desktop.png"}
-                      alt={project.screenshotAlt ?? `${project.name} screenshot`}
-                      width={1440}
-                      height={900}
-                      className="capture-frame__media"
-                    />
-                  </figure>
+          <div className="container">
+            <div ref={horizTrackRef} className="horiz-track">
+              {SHOWCASE_CARDS.map((project) => (
+                <div key={project.slug} data-horiz-parallax className="horiz-card-wrap">
+                  <WobbleCard as="article" tilt={6} wobble={1.15} className="horiz-card">
+                    <figure className="capture-frame">
+                      <Image
+                        src={project.screenshotPath ?? "/projects/arcix-home-desktop.png"}
+                        alt={project.screenshotAlt ?? `${project.name} screenshot`}
+                        width={1440}
+                        height={900}
+                        className="capture-frame__media"
+                      />
+                    </figure>
 
-                  <div className="flex items-baseline justify-between gap-4">
-                    <div>
-                      <h3 className="text-title font-medium text-ink">{project.name}</h3>
-                      <p className="text-sm text-muted">{project.category}</p>
+                    <div className="flex items-baseline justify-between gap-4">
+                      <div>
+                        <h3 className="text-title font-medium text-ink">{project.name}</h3>
+                        <p className="text-sm text-muted">{project.category}</p>
+                      </div>
+                      <Link href={`/work/${project.slug}`} className="text-link text-sm font-medium shrink-0">
+                        Case study
+                      </Link>
                     </div>
-                    <Link href={`/work/${project.slug}`} className="text-link text-sm font-medium shrink-0">
-                      Case study
-                    </Link>
-                  </div>
-                </WobbleCard>
-              </div>
-            ))}
+                  </WobbleCard>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>

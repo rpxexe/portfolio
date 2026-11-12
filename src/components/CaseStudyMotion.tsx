@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { ArchitectureNode } from "@/data/projects";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 export function CaseStudyWalkthrough({
   nodes,
@@ -22,7 +24,7 @@ export function CaseStudyWalkthrough({
   const stepsRef = useRef<HTMLOListElement>(null);
   const busFillRef = useRef<SVGLineElement>(null);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const grid = gridRef.current;
     const pin = pinRef.current;
     const steps = stepsRef.current;
@@ -82,7 +84,8 @@ export function CaseStudyWalkthrough({
 
   return (
     <div ref={gridRef} className="walk-grid">
-      <div ref={pinRef} className="walk-pin panel p-6 flex flex-col gap-5">
+      <div className="walk-pin-host">
+        <div ref={pinRef} className="walk-pin panel p-6 flex flex-col gap-5">
         <div className="flex items-center justify-between gap-3">
           <span className="text-sm font-medium text-ink">Signal walkthrough</span>
           <span className="measured text-cool">
@@ -169,6 +172,7 @@ export function CaseStudyWalkthrough({
             )}
           </div>
         )}
+        </div>
       </div>
 
       <ol ref={stepsRef} className="walk-steps">
@@ -210,7 +214,7 @@ export function CaseStudyWalkthrough({
 export function CaseStudyMotion({ children }: { children: ReactNode }) {
   const rootRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const root = rootRef.current;
     if (!root) return;
 
