@@ -8,6 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowUpRight } from "lucide-react";
 import { Magnetic } from "@/components/Magnetic";
 import { RollText } from "@/components/RollText";
+import { Logo } from "@/components/Logo";
 import { INTRO_COVERED_EVENT, INTRO_DONE_EVENT } from "@/components/PageLoader";
 import { PROFILE } from "@/data/profile";
 import { PROJECTS } from "@/data/projects";
@@ -44,17 +45,6 @@ const WAVE_FULL = "M0 100 V0 Q50 0 100 0 V100 Z";
 
 const isActiveRoute = (pathname: string, href: string) =>
   href === "/" ? pathname === "/" : pathname.startsWith(href);
-
-/** Animated "Risu" wordmark: a pill with a dash orbiting its outline. */
-function BrandMark() {
-  return (
-    <svg className="brand-mark" viewBox="0 0 64 36" aria-hidden="true">
-      <rect x="1" y="1" width="62" height="34" rx="17" className="brand-mark__ring" />
-      <rect x="1" y="1" width="62" height="34" rx="17" className="brand-mark__orbit" pathLength={100} />
-      <text x="32" y="22.5" className="brand-mark__text">Risu</text>
-    </svg>
-  );
-}
 
 function useIstClock() {
   const [time, setTime] = useState("--:--");
@@ -273,11 +263,7 @@ export function Navbar() {
       >
         <div className="site-nav__shell">
           <Link href="/" data-nav-reveal className="site-nav__brand" aria-label={`${PROFILE.name}, home`}>
-            <BrandMark />
-            <span className="site-nav__brand-text">
-              <span>Rishabh</span>
-              <span className="brand-serif">Vishwakarma</span>
-            </span>
+            <Logo />
           </Link>
 
           <nav
