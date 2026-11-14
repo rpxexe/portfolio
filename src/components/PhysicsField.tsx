@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { isLite } from "@/lib/motion";
 
 interface Particle {
   x: number;
@@ -22,7 +23,8 @@ export function PhysicsField() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // Reduced motion or lite devices: paint one static frame, never run the per-frame loop
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches || isLite();
     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
     let width = window.innerWidth;
@@ -128,7 +130,11 @@ export function PhysicsField() {
     if (!prefersReduced) {
       window.addEventListener("scroll", onScroll, { passive: true });
     }
-    window.addEventListener("resize", resize);
+    const onResize = () => {
+      resize();
+      if (prefersReduced) drawFrame(performance.now());
+    };
+    window.addEventListener("resize", onResize);
 
     let rafId = 0;
     let lastTime = performance.now();
@@ -276,7 +282,7 @@ export function PhysicsField() {
 
     return () => {
       window.cancelAnimationFrame(rafId);
-      window.removeEventListener("resize", resize);
+      window.removeEventListener("resize", onResize);
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointerleave", onLeave);

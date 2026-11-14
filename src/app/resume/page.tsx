@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArrowUpRight, Code2, Link2, Mail, MapPin } from "lucide-react";
 import { ResumeActions } from "@/components/ResumeActions";
+import { ResumeShell, type TocItem } from "@/components/ResumeMotion";
+import { SectionHeading } from "@/components/SectionHeading";
 import { PROFILE } from "@/data/profile";
 import { FEATURED_PROJECTS } from "@/data/projects";
 
@@ -10,136 +13,188 @@ export const metadata: Metadata = {
     "Resume of Rishabh Vishwakarma: Web Developer experience, TypeScript, Next.js, AI orchestration, and systems projects.",
 };
 
+const TOC: TocItem[] = [
+  { id: "cv-summary", label: "Summary" },
+  { id: "cv-experience", label: "Experience" },
+  { id: "cv-projects", label: "Projects" },
+  { id: "cv-skills", label: "Skills" },
+  { id: "cv-education", label: "Education" },
+];
+
 export default function ResumePage() {
   const resumeProjects = FEATURED_PROJECTS.slice(0, 4);
 
   return (
-    <section className="band-section--tight" aria-labelledby="resume-heading">
-      <div className="container max-w-4xl flex flex-col gap-10">
-        <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-rule">
-          <div className="flex flex-col gap-2">
-            <h1 id="resume-heading" style={{ fontSize: "var(--text-display-s)" }}>
-              {PROFILE.name}
-            </h1>
-            <p className="lead text-ink-2">{PROFILE.role}</p>
-            <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted pt-1">
-              <span>{PROFILE.location}</span>
-              <a href={`mailto:${PROFILE.email}`} className="text-link">
-                {PROFILE.email}
-              </a>
-              <a href={PROFILE.github} target="_blank" rel="noopener noreferrer" className="text-link">
-                github.com/rpxexe
-              </a>
-              <a href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" className="text-link">
-                linkedin.com/in/rpxexe
-              </a>
-            </div>
+    <section className="resume band-section--tight" aria-labelledby="resume-heading">
+      <div className="container">
+        <header className="resume__hero">
+          <div className="resume__hero-main">
+            <SectionHeading as="h1" index="CV" kicker="resume.pdf" title="Rishabh *Vishwakarma*" id="resume-heading" />
+            <p data-reveal className="lead text-ink-2">
+              {PROFILE.role}. {PROFILE.availability}
+            </p>
+            <ul data-reveal className="resume__contacts">
+              <li>
+                <MapPin size={14} strokeWidth={1.75} aria-hidden="true" />
+                {PROFILE.location}
+              </li>
+              <li>
+                <Mail size={14} strokeWidth={1.75} aria-hidden="true" />
+                <a href={`mailto:${PROFILE.email}`} className="text-link">{PROFILE.email}</a>
+              </li>
+              <li>
+                <Code2 size={14} strokeWidth={1.75} aria-hidden="true" />
+                <a href={PROFILE.github} target="_blank" rel="noopener noreferrer" className="text-link">github.com/rpxexe</a>
+              </li>
+              <li>
+                <Link2 size={14} strokeWidth={1.75} aria-hidden="true" />
+                <a href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" className="text-link">linkedin.com/in/rpxexe</a>
+              </li>
+            </ul>
           </div>
-
-          <ResumeActions />
+          <div data-reveal>
+            <ResumeActions />
+          </div>
         </header>
 
-        <section className="grid gap-3" aria-labelledby="res-summary">
-          <h2 id="res-summary" style={{ fontSize: "var(--text-xl)" }}>
-            Summary
-          </h2>
-          <p className="text-ink-2">{PROFILE.summary}</p>
-        </section>
-
-        <section className="grid gap-6" aria-labelledby="res-exp">
-          <h2 id="res-exp" style={{ fontSize: "var(--text-xl)" }}>
-            Experience
-          </h2>
-          {PROFILE.experience.map((exp) => (
-            <article key={exp.id} className="panel p-6 grid gap-3">
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h3 className="text-lg font-medium text-ink">
-                  {exp.role}, {exp.organization}
-                </h3>
-                <span className="measured text-cool">{exp.period}</span>
-              </div>
-              <p className="text-sm text-muted">{exp.location}</p>
-              <ul className="grid gap-2 text-sm text-ink-2 list-disc pl-5">
-                {exp.highlights.map((h) => (
-                  <li key={h}>{h}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
-        </section>
-
-        <section className="grid gap-6" aria-labelledby="res-proj">
-          <h2 id="res-proj" style={{ fontSize: "var(--text-xl)" }}>
-            Selected Engineering Projects
-          </h2>
-          <div className="grid gap-4">
-            {resumeProjects.map((proj) => (
-              <article key={proj.slug} className="panel p-6 grid gap-3">
-                <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 className="text-lg font-medium text-ink">
-                    <Link href={`/work/${proj.slug}`} className="hover:text-accent">
-                      {proj.name}
-                    </Link>
-                  </h3>
-                  <span className="measured text-cool">{proj.runtime}</span>
-                </div>
-                <p className="text-sm text-ink-2">{proj.summary}</p>
-                <ul className="grid gap-1.5 text-sm text-muted list-disc pl-5">
-                  {proj.highlights.slice(0, 3).map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="grid gap-4" aria-labelledby="res-skills">
-          <h2 id="res-skills" style={{ fontSize: "var(--text-xl)" }}>
-            Technical Skills
-          </h2>
-          <dl className="panel p-6 grid gap-3 text-sm">
-            {PROFILE.skills.map((group) => (
-              <div key={group.id} className="grid grid-cols-1 sm:grid-cols-12 gap-2 pb-3 border-b border-rule last:border-0 last:pb-0">
-                <dt className="sm:col-span-4 font-medium text-ink">{group.domain}</dt>
-                <dd className="sm:col-span-8 text-ink-2">{group.items.join(", ")}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-6" aria-labelledby="res-edu">
-          <div className="panel p-6 grid gap-3">
-            <h2 id="res-edu" style={{ fontSize: "var(--text-xl)" }}>
-              Education
+        <ResumeShell toc={TOC}>
+          <section id="cv-summary" className="cv-section" aria-labelledby="cv-summary-h">
+            <h2 id="cv-summary-h" className="cv-h">
+              <span className="cv-h__num">01</span> Summary
             </h2>
-            {PROFILE.education.map((edu) => (
-              <div key={edu.degree} className="grid gap-1 text-sm">
-                <p className="font-medium text-ink">{edu.degree}</p>
-                <p className="text-ink-2">{edu.institution}</p>
-                <p className="measured text-cool">{edu.period}</p>
-                <p className="measured text-accent">{edu.score}</p>
-              </div>
-            ))}
-          </div>
+            <p data-reveal className="cv-summary">{PROFILE.summary}</p>
+          </section>
 
-          <div className="panel p-6 grid gap-3">
-            <h2 style={{ fontSize: "var(--text-xl)" }}>Achievements & Certifications</h2>
-            <p className="text-sm text-ink-2">{PROFILE.achievements[0]}</p>
-            <ul className="grid gap-1.5 text-sm text-muted list-disc pl-5">
-              {PROFILE.certifications.map((cert) => (
-                <li key={cert.title}>
-                  <span className="text-ink">{cert.title}</span> ({cert.issuer})
+          <section id="cv-experience" className="cv-section" aria-labelledby="cv-exp-h">
+            <h2 id="cv-exp-h" className="cv-h">
+              <span className="cv-h__num">02</span> Experience
+            </h2>
+            <ol className="cv-timeline">
+              <span className="cv-timeline__track" aria-hidden="true">
+                <span className="cv-timeline__fill" />
+              </span>
+              {PROFILE.experience.map((exp) => (
+                <li key={exp.id} className="cv-timeline__item">
+                  <span className="cv-timeline__node" aria-hidden="true" />
+                  <div className="cv-timeline__head">
+                    <h3 className="cv-timeline__role">
+                      {exp.role} <span className="text-muted">at</span> <span className="text-accent">{exp.organization}</span>
+                    </h3>
+                    <span className="measured text-cool">{exp.period}</span>
+                  </div>
+                  <p className="measured text-muted">{exp.location}</p>
+                  <ul className="cv-timeline__points">
+                    {exp.highlights.map((h) => (
+                      <li key={h}>{h}</li>
+                    ))}
+                  </ul>
+                  <ul className="cv-chips">
+                    {exp.stack.map((s) => (
+                      <li key={s} className="chip">{s}</li>
+                    ))}
+                  </ul>
                 </li>
               ))}
-            </ul>
-            <p className="text-sm text-muted pt-2 border-t border-rule">
-              Languages: {PROFILE.languages.join(", ")}
-            </p>
-          </div>
-        </section>
+              {PROFILE.education.map((edu) => (
+                <li key={edu.degree} className="cv-timeline__item">
+                  <span className="cv-timeline__node" aria-hidden="true" />
+                  <div className="cv-timeline__head">
+                    <h3 className="cv-timeline__role">
+                      B.Sc. Information Technology <span className="text-muted">at</span>{" "}
+                      <span className="text-accent">K.G. Mittal Institute</span>
+                    </h3>
+                    <span className="measured text-cool">{edu.period}</span>
+                  </div>
+                  <p className="measured text-muted">{edu.score}</p>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          <section id="cv-projects" className="cv-section" aria-labelledby="cv-proj-h">
+            <h2 id="cv-proj-h" className="cv-h">
+              <span className="cv-h__num">03</span> Selected projects
+            </h2>
+            <div className="cv-projects">
+              {resumeProjects.map((proj) => (
+                <article key={proj.slug} data-reveal className="cv-project">
+                  <div className="cv-project__top">
+                    <span className="cv-project__rank measured">0{proj.rank}</span>
+                    <span className="measured text-muted">{proj.runtime}</span>
+                  </div>
+                  <h3 className="cv-project__name">
+                    <Link href={`/work/${proj.slug}`} className="cv-project__link">
+                      {proj.name}
+                      <ArrowUpRight size={18} strokeWidth={1.5} aria-hidden="true" />
+                    </Link>
+                  </h3>
+                  <p className="text-sm text-ink-2">{proj.summary}</p>
+                  <ul className="cv-project__points">
+                    {proj.highlights.slice(0, 3).map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section id="cv-skills" className="cv-section" aria-labelledby="cv-skills-h">
+            <h2 id="cv-skills-h" className="cv-h">
+              <span className="cv-h__num">04</span> Technical skills
+            </h2>
+            <div className="cv-skills">
+              {PROFILE.skills.map((group) => (
+                <div key={group.id} className="cv-skill">
+                  <div>
+                    <h3 className="cv-skill__domain">{group.domain}</h3>
+                    <p className="text-sm text-muted">{group.summary}</p>
+                  </div>
+                  <ul className="cv-chips">
+                    {group.items.map((item) => (
+                      <li key={item} className="chip">{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section id="cv-education" className="cv-section" aria-labelledby="cv-edu-h">
+            <h2 id="cv-edu-h" className="cv-h">
+              <span className="cv-h__num">05</span> Education &amp; recognition
+            </h2>
+            <div className="cv-cards">
+              {PROFILE.education.map((edu) => (
+                <article key={edu.degree} data-reveal className="cv-card">
+                  <p className="measured text-accent">{edu.score}</p>
+                  <h3 className="cv-card__title">{edu.degree}</h3>
+                  <p className="text-sm text-ink-2">{edu.institution}</p>
+                  <p className="measured text-cool">{edu.period}</p>
+                </article>
+              ))}
+              <article data-reveal className="cv-card">
+                <p className="measured text-accent">#1</p>
+                <h3 className="cv-card__title">Achievements</h3>
+                <p className="text-sm text-ink-2">{PROFILE.achievements[0]}</p>
+              </article>
+              <article data-reveal className="cv-card cv-card--wide">
+                <p className="measured text-accent">certifications</p>
+                <ul className="cv-certs">
+                  {PROFILE.certifications.map((cert) => (
+                    <li key={cert.title}>
+                      <span className="text-ink">{cert.title}</span>
+                      <span className="measured text-muted"> · {cert.issuer}</span>
+                      <p className="text-sm text-ink-2">{cert.detail}</p>
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-sm text-muted cv-langs">Languages: {PROFILE.languages.join(", ")}</p>
+              </article>
+            </div>
+          </section>
+        </ResumeShell>
       </div>
     </section>
   );
 }
-

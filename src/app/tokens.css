@@ -34,9 +34,9 @@
   --color-ok-soft: oklch(21% 0.04 162);
   --color-bad: oklch(72% 0.16 25);
   --color-bad-soft: oklch(22% 0.04 25);
-  --font-display: var(--font-rethink), "Rethink Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-body: var(--font-display);
-  --font-serif-accent: var(--font-garamond), "EB Garamond", Georgia, serif;
+  --font-display: var(--font-bricolage), "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-geist), "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-serif-accent: var(--font-instrument), "Instrument Serif", Georgia, serif;
   --font-outlier: var(--font-jetbrains), "JetBrains Mono", ui-monospace, monospace;
   --radius-card: 12px;
   --radius-pill: 999px;

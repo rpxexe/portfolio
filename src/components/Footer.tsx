@@ -5,7 +5,7 @@ export function Footer() {
   return (
     <footer className="border-t border-rule bg-paper-3 pt-14 pb-10 no-print">
       <div className="container flex flex-col gap-12">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-rule">
+        <div data-reveal className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-rule">
           <p className="text-sm text-ink-2">
             {PROFILE.name}, {PROFILE.location}
           </p>
@@ -32,7 +32,7 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+        <div data-reveal className="flex flex-col md:flex-row md:items-end justify-between gap-8">
           <div className="flex flex-col gap-2">
             <span className="measured text-accent">Open to software engineering roles</span>
             <p className="text-3xl sm:text-4xl font-medium text-ink tracking-tight">
@@ -50,7 +50,7 @@ export function Footer() {
           </div>
         </div>
 
-        <p className="footer-giant pt-4 border-t border-rule" aria-hidden="true">
+        <p data-reveal="chars" className="footer-giant pt-4 border-t border-rule" aria-hidden="true">
           GET IN TOUCH
         </p>
 

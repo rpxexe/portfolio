@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ContactForm } from "@/components/ContactForm";
+import { SectionHeading } from "@/components/SectionHeading";
 import { PROFILE } from "@/data/profile";
 
 export const metadata: Metadata = {
@@ -11,11 +12,12 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <section className="band-section--tight" aria-labelledby="contact-heading">
-      <div className="container flex flex-col gap-10">
-        <div className="flex flex-col gap-4 max-w-3xl">
-          <h1 id="contact-heading">Get in touch</h1>
-          <p className="lead text-ink-2">
-            Reach out for full-stack, AI orchestration, or systems engineering roles.
+      <div className="container flex flex-col gap-12">
+        <div className="contact-head">
+          <SectionHeading as="h1" index="@" kicker="contact" title="Start a *conversation*" id="contact-heading" />
+          <p data-reveal className="lead text-ink-2">
+            Hiring for a full-stack, AI orchestration, or systems role? Have a build in mind? Send a brief and it lands
+            straight in my inbox.
           </p>
         </div>
 
