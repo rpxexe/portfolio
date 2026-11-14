@@ -121,7 +121,7 @@ export function SystemGraph({ activeIndex }: { activeIndex: number }) {
         <g data-graph-node="src" className="graph__node graph__node--io">
           <rect x={SRC.x} y={MID_Y - SRC.h / 2} width={SRC.w} height={SRC.h} rx={10} />
           <text x={SRC.x + SRC.w / 2} y={MID_Y - 2} className="graph__label">request</text>
-          <text x={SRC.x + SRC.w / 2} y={MID_Y + 13} className="graph__sub">you → rv</text>
+          <text x={SRC.x + SRC.w / 2} y={MID_Y + 13} className="graph__sub">you → risu</text>
           <circle cx={SRC.x + SRC.w} cy={MID_Y} r={3.5} className="graph__port" />
         </g>
 

@@ -155,7 +155,7 @@ export function ProjectIDE() {
         <span className="pcard__dots" aria-hidden="true">
           <i /><i /><i />
         </span>
-        <span className="ide__title measured">rv-portfolio — {p.slug}.case.ts</span>
+        <span className="ide__title measured">risu-portfolio — {p.slug}.case.ts</span>
         <span className="ide__title-right measured">{auto ? "autoplay" : "manual"}</span>
       </div>
 

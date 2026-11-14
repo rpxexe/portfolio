@@ -45,13 +45,13 @@ const WAVE_FULL = "M0 100 V0 Q50 0 100 0 V100 Z";
 const isActiveRoute = (pathname: string, href: string) =>
   href === "/" ? pathname === "/" : pathname.startsWith(href);
 
-/** Animated monogram: orbiting dashed ring around "RV". */
+/** Animated "Risu" wordmark: a pill with a dash orbiting its outline. */
 function BrandMark() {
   return (
-    <svg className="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
-      <circle cx="20" cy="20" r="18" className="brand-mark__ring" />
-      <circle cx="20" cy="20" r="18" className="brand-mark__orbit" pathLength={100} />
-      <text x="20" y="24.5" className="brand-mark__text">RV</text>
+    <svg className="brand-mark" viewBox="0 0 64 36" aria-hidden="true">
+      <rect x="1" y="1" width="62" height="34" rx="17" className="brand-mark__ring" />
+      <rect x="1" y="1" width="62" height="34" rx="17" className="brand-mark__orbit" pathLength={100} />
+      <text x="32" y="22.5" className="brand-mark__text">Risu</text>
     </svg>
   );
 }

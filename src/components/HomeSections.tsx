@@ -5,15 +5,14 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Check, Copy, Mail, Plus } from "lucide-react";
-import CountUp from "@/components/CountUp";
 import DecryptedText from "@/components/DecryptedText";
-import SpotlightCard from "@/components/SpotlightCard";
 import { Magnetic } from "@/components/Magnetic";
 import { SignalString } from "@/components/SignalString";
-import { WobbleCard } from "@/components/WobbleCard";
 import { ProjectIDE } from "@/components/ProjectIDE";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Portrait } from "@/components/Portrait";
+import { PrinciplesPanels } from "@/components/PrinciplesPanels";
+import { ProofSection } from "@/components/ProofSection";
 import { SkillsShowcase } from "@/components/SkillsShowcase";
 import { PROFILE } from "@/data/profile";
 import { isLite } from "@/lib/motion";
@@ -27,36 +26,6 @@ const INTRO_STACK_COLUMNS = [
   { area: "Desktop & Native", detail: "Electron 34, C# Win32 SendInput, SQLite WAL" },
   { area: "AI Orchestration", detail: "Inngest DAGs, ReactFlow, OpenAI, Gemini, Anthropic" },
   { area: "Web & Persistence", detail: "Next.js 16, TypeScript, PostgreSQL, MongoDB" },
-];
-
-const PRINCIPLES = [
-  {
-    code: "01",
-    title: "Native Win32 Precision",
-    summary: "Sub-millisecond pointer and keyboard synthesis via zero-dependency C# SendInput.",
-  },
-  {
-    code: "02",
-    title: "Durable AI DAGs",
-    summary: "Topological ReactFlow execution pipelines backed by step-safe Inngest retries.",
-  },
-  {
-    code: "03",
-    title: "Zero-Cloud Crypto",
-    summary: "Local UDP subnet discovery and TLS 1.3 sealed inside Windows DPAPI storage.",
-  },
-  {
-    code: "04",
-    title: "Transactional Clarity",
-    summary: "Zero-write Excel dry runs and atomic employee asset offboarding.",
-  },
-];
-
-const FACTS = [
-  { label: "Repositories shipped", value: PROJECTS.length, suffix: "" },
-  { label: "Years production web", value: 1.5, decimals: 1, suffix: "+" },
-  { label: "B.Sc. IT CGPI (/10)", value: 8.7, decimals: 1, suffix: "" },
-  { label: "College coding rank", value: 1, suffix: "st" },
 ];
 
 const FAQ_ITEMS = [
@@ -92,8 +61,6 @@ export function HomeSections() {
 
   const kineticTopRef = useRef<HTMLDivElement>(null);
   const kineticBotRef = useRef<HTMLDivElement>(null);
-  const auditTrailRef = useRef<HTMLDivElement>(null);
-  const auditSpineRef = useRef<HTMLSpanElement>(null);
 
   useIsomorphicLayoutEffect(() => {
     const mm = gsap.matchMedia();
@@ -154,22 +121,6 @@ export function HomeSections() {
           );
         }
 
-        if (auditTrailRef.current && auditSpineRef.current) {
-          gsap.fromTo(
-            auditSpineRef.current,
-            { scaleY: 0 },
-            {
-              scaleY: 1,
-              ease: "none",
-              scrollTrigger: {
-                trigger: auditTrailRef.current,
-                start: "top 75%",
-                end: "bottom 60%",
-                scrub: 0.35,
-              },
-            }
-          );
-        }
       });
 
       return () => {
@@ -178,7 +129,7 @@ export function HomeSections() {
       };
     });
 
-    // Desktop-only Pinned Horizontal Gallery + Multi-Plane Parallax
+    // Desktop-only multi-plane parallax (rails + intro columns)
     mm.add("(prefers-reduced-motion: no-preference) and (min-width: 60rem)", () => {
       const ctx = gsap.context(() => {
         // Counter-depth drift on sticky rotated editorial margin rails
@@ -223,60 +174,6 @@ export function HomeSections() {
           );
         });
 
-        // Subtle opposite-lane parallax across Principles bento columns
-        const leftTiles = gsap.utils.toArray<HTMLElement>("[data-parallax-tile='left']");
-        const rightTiles = gsap.utils.toArray<HTMLElement>("[data-parallax-tile='right']");
-        leftTiles.forEach((tile) => {
-          gsap.fromTo(
-            tile,
-            { y: 16 },
-            {
-              y: -16,
-              ease: "none",
-              scrollTrigger: {
-                trigger: tile.closest("section") ?? tile,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: 0.5,
-              },
-            }
-          );
-        });
-        rightTiles.forEach((tile) => {
-          gsap.fromTo(
-            tile,
-            { y: -12 },
-            {
-              y: 12,
-              ease: "none",
-              scrollTrigger: {
-                trigger: tile.closest("section") ?? tile,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: 0.5,
-              },
-            }
-          );
-        });
-
-        // Depth float between Facts bento card and Experience timeline
-        const factsCard = document.querySelector<HTMLElement>("[data-parallax-facts]");
-        if (factsCard) {
-          gsap.fromTo(
-            factsCard,
-            { y: 18 },
-            {
-              y: -18,
-              ease: "none",
-              scrollTrigger: {
-                trigger: factsCard.closest("section") ?? factsCard,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: 0.5,
-              },
-            }
-          );
-        }
       });
 
       return () => ctx.revert();
@@ -397,7 +294,7 @@ export function HomeSections() {
       {/* 03: Toolbox: icon marquees + animated domain emblems */}
       <SkillsShowcase />
 
-      {/* 04: Principles Bento powered by React Bits SpotlightCard */}
+      {/* 04: Principles: expanding panels */}
       <section id="principles" className="band-section band-section--deep" aria-labelledby="principles-heading">
         <div className="container">
           <div className="editorial-grid">
@@ -409,44 +306,17 @@ export function HomeSections() {
               <div className="section-head-split">
                 <SectionHeading index="04" kicker="principles" title="How I *engineer*" id="principles-heading" />
                 <p data-reveal className="lead text-ink-2">
-                  Architecture decisions shaped around latency, safety, and maintainability.
+                  Four rules I build by, each one proven in a project you can open.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {PRINCIPLES.map((item, idx) => (
-                  <div key={item.code} data-parallax-tile={idx % 2 === 0 ? "left" : "right"}>
-                    <div data-reveal className="h-full">
-                    <WobbleCard tilt={7} wobble={1.3} className="rounded-xl h-full">
-                      <SpotlightCard
-                        spotlightColor="oklch(82% 0.19 162)"
-                        intensity={0.14}
-                        borderGlow={0.65}
-                        className="p-6 sm:p-7 flex flex-col justify-between gap-6 h-full"
-                      >
-                        <DecryptedText
-                          text={item.code}
-                          animateOn="hover"
-                          speed={35}
-                          className="measured text-cool"
-                          parentClassName="measured"
-                        />
-                        <div className="grid gap-2">
-                          <h3 className="text-title font-medium text-ink">{item.title}</h3>
-                          <p className="text-sm text-ink-2">{item.summary}</p>
-                        </div>
-                      </SpotlightCard>
-                    </WobbleCard>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <PrinciplesPanels />
             </div>
           </div>
         </div>
       </section>
 
-      {/* 05: Experience Timeline & React Bits CountUp Facts */}
+      {/* 05: Proof gauges + career commit log */}
       <section id="experience" className="band-section--large" aria-labelledby="experience-heading">
         <div className="container">
           <div className="editorial-grid">
@@ -457,82 +327,10 @@ export function HomeSections() {
             <div>
               <div className="section-head-split">
                 <SectionHeading index="05" kicker="track_record" title="Proof, not *promises*" id="experience-heading" />
-                <p data-reveal className="lead text-ink-2">Production delivery backed by computer science fundamentals.</p>
+                <p data-reveal className="lead text-ink-2">Numbers and history you can verify, no adjectives required.</p>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                <div className="lg:col-span-6">
-                  <div ref={auditTrailRef} className="audit-trail">
-                    <span ref={auditSpineRef} className="audit-trail__progress" aria-hidden="true" />
-                    {PROFILE.experience.map((exp) => (
-                      <article key={exp.id} data-reveal className="audit-entry">
-                        <div className="flex flex-wrap items-baseline justify-between gap-2">
-                          <h3 className="text-title font-medium text-ink">
-                            {exp.role}, {exp.organization}
-                          </h3>
-                          <span className="measured text-cool">{exp.period}</span>
-                        </div>
-                        <p className="text-sm text-ink-2">
-                          Next.js, Node.js, PostgreSQL/MongoDB APIs, and multi-LLM pipelines.
-                        </p>
-                      </article>
-                    ))}
-
-                    {PROFILE.education.map((edu) => (
-                      <article key={edu.degree} data-reveal className="audit-entry">
-                        <div className="flex flex-wrap items-baseline justify-between gap-2">
-                          <h3 className="text-title font-medium text-ink">B.Sc. Information Technology</h3>
-                          <span className="measured text-cool">{edu.period}</span>
-                        </div>
-                        <p className="text-sm text-ink-2">Smt. K.G. Mittal Institute, Mumbai</p>
-                        <p className="measured text-accent">{edu.score}</p>
-                      </article>
-                    ))}
-
-                    <article data-reveal className="audit-entry">
-                      <div className="flex flex-wrap items-baseline justify-between gap-2">
-                        <h3 className="text-title font-medium text-ink">College Coding Competition</h3>
-                        <span className="measured text-cool">C++, DSA</span>
-                      </div>
-                      <p className="text-sm text-ink-2">1st position in algorithmic problem solving.</p>
-                    </article>
-                  </div>
-                </div>
-
-                <div className="lg:col-span-6 flex flex-col gap-6 record-sticky">
-                  <div data-parallax-facts>
-                    <WobbleCard tilt={5.5} wobble={1.15} className="rounded-xl">
-                      <div className="facts-grid" data-reveal-stagger>
-                        {FACTS.map((fact) => (
-                          <div key={fact.label} className="fact-cell">
-                            <div className="fact-num">
-                              <CountUp
-                                to={fact.value}
-                                decimals={fact.decimals}
-                                suffix={fact.suffix}
-                                duration={1.4}
-                                easing="spring"
-                                replayOnHover
-                              />
-                              <span className="fact-dot" aria-hidden="true" />
-                            </div>
-                            <p className="text-sm text-muted">{fact.label}</p>
-                          </div>
-                        ))}
-                      </div>
-                    </WobbleCard>
-                  </div>
-
-                  <div data-reveal className="flex items-center justify-between gap-4 pt-2">
-                    <Link href="/resume" className="text-link text-sm font-medium">
-                      Full web resume
-                    </Link>
-                    <a href={PROFILE.resumePdfPath} download className="text-link text-sm">
-                      Download PDF
-                    </a>
-                  </div>
-                </div>
-              </div>
+              <ProofSection />
             </div>
           </div>
         </div>

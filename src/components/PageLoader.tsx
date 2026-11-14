@@ -201,7 +201,7 @@ export function PageLoader() {
         <div className="intro-top measured">
           <span className="reveal-clip">
             <span data-intro-rise className="reveal-line">
-              <span className="text-accent">RV</span>
+              <span className="text-accent">Risu</span>
               <span className="text-muted"> / portfolio.boot()</span>
             </span>
           </span>
