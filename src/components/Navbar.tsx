@@ -1,319 +1,446 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowUpRight, X } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Magnetic } from "@/components/Magnetic";
+import { RollText } from "@/components/RollText";
 import { INTRO_COVERED_EVENT, INTRO_DONE_EVENT } from "@/components/PageLoader";
 import { PROFILE } from "@/data/profile";
+import { PROJECTS } from "@/data/projects";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const NAV_ITEMS = [
+  { href: "/", label: "Home" },
   { href: "/work", label: "Work" },
   { href: "/resume", label: "Resume" },
   { href: "/contact", label: "Contact" },
 ];
 
-const DRAWER_LINKS = [
-  { index: "01", href: "/#introduction", label: "Introduction" },
-  { index: "02", href: "/#work-index", label: "Selected Systems" },
-  { index: "03", href: "/#principles", label: "Architecture Principles" },
-  { index: "04", href: "/#experience", label: "Experience & Figures" },
-  { index: "05", href: "/#faq", label: "Questions" },
+const MENU_ITEMS = [
+  { index: "01", href: "/", label: "Home", note: "Hero, toolbox, principles and FAQ in one scroll." },
+  { index: "02", href: "/work", label: "Work", note: `${PROJECTS.length} systems ranked by architectural complexity.` },
+  { index: "03", href: "/resume", label: "Resume", note: "Experience, education and skills. Printable and downloadable." },
+  { index: "04", href: "/contact", label: "Contact", note: PROFILE.availability },
 ];
+
+const SECTION_LINKS = [
+  { href: "/#introduction", label: "About" },
+  { href: "/#work-index", label: "Projects" },
+  { href: "/#skills", label: "Toolbox" },
+  { href: "/#principles", label: "Principles" },
+  { href: "/#experience", label: "Record" },
+  { href: "/#faq", label: "FAQ" },
+];
+
+// SVG wave states for the menu curtain (same command structure so GSAP can tween `d`)
+const WAVE_FLAT = "M0 100 V100 Q50 100 100 100 V100 Z";
+const WAVE_BULGE = "M0 100 V55 Q50 -5 100 55 V100 Z";
+const WAVE_FULL = "M0 100 V0 Q50 0 100 0 V100 Z";
+
+const isActiveRoute = (pathname: string, href: string) =>
+  href === "/" ? pathname === "/" : pathname.startsWith(href);
+
+/** Animated monogram: orbiting dashed ring around "RV". */
+function BrandMark() {
+  return (
+    <svg className="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
+      <circle cx="20" cy="20" r="18" className="brand-mark__ring" />
+      <circle cx="20" cy="20" r="18" className="brand-mark__orbit" pathLength={100} />
+      <text x="20" y="24.5" className="brand-mark__text">RV</text>
+    </svg>
+  );
+}
+
+function useIstClock() {
+  const [time, setTime] = useState("--:--");
+  useEffect(() => {
+    const tick = () => {
+      try {
+        setTime(
+          new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date())
+        );
+      } catch {
+        setTime("IST");
+      }
+    };
+    tick();
+    const id = window.setInterval(tick, 20000);
+    return () => window.clearInterval(id);
+  }, []);
+  return time;
+}
 
 export function Navbar() {
   const pathname = usePathname();
+  const time = useIstClock();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [menuMounted, setMenuMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const [hoverIdx, setHoverIdx] = useState(0);
+
   const headerRef = useRef<HTMLElement>(null);
-  const progressRef = useRef<HTMLSpanElement>(null);
-  const drawerRef = useRef<HTMLDivElement>(null);
+  const linksRef = useRef<HTMLElement>(null);
+  const indicatorRef = useRef<HTMLSpanElement>(null);
+  const ringRef = useRef<SVGCircleElement>(null);
+  const menuBtnRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuTlRef = useRef<gsap.core.Timeline | null>(null);
+  // Mirrors menuMounted so effect cleanups don't revert the timeline mid-reverse
+  const menuMountedRef = useRef(false);
 
+  // Scroll state: capsule after 40px, hide on fast downward scroll, reveal on upward
   useEffect(() => {
-    const header = headerRef.current;
-    const progress = progressRef.current;
-    if (!header) return;
-
+    let lastY = window.scrollY;
     const onScroll = () => {
-      const next = window.scrollY > 24;
-      setScrolled((prev) => (prev === next ? prev : next));
+      const y = window.scrollY;
+      setScrolled(y > 40);
+      if (Math.abs(y - lastY) > 6) {
+        setHidden(y > lastY && y > 320);
+        lastY = y;
+      }
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
+  // Intro reveal + scroll progress ring
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
     const mm = gsap.matchMedia();
     mm.add("(prefers-reduced-motion: no-preference)", () => {
       let active = true;
-
-      const getNavItems = () => header.querySelectorAll("[data-nav-reveal]");
-
-      const prepareNavReveal = () => {
-        if (!active) return;
-        const els = getNavItems();
-        if (els.length) gsap.set(els, { y: -12, opacity: 0 });
-      };
-
-      const playNavReveal = () => {
-        if (!active) return;
-        const els = getNavItems();
-        if (!els.length) return;
+      const items = () => header.querySelectorAll("[data-nav-reveal]");
+      const prepare = () => active && gsap.set(items(), { y: -16, opacity: 0 });
+      const play = () =>
+        active &&
         gsap.fromTo(
-          els,
-          { y: -12, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.55,
-            stagger: 0.055,
-            ease: "power3.out",
-            clearProps: "transform,opacity",
-          }
+          items(),
+          { y: -16, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7, stagger: 0.06, ease: "expo.out", clearProps: "transform,opacity" }
         );
-      };
 
-      const overlayExists = Boolean(document.querySelector(".intro-overlay"));
-      if (overlayExists) {
-        window.addEventListener(INTRO_COVERED_EVENT, prepareNavReveal, { once: true });
-        window.addEventListener(INTRO_DONE_EVENT, playNavReveal, { once: true });
+      if (document.querySelector(".intro-overlay")) {
+        window.addEventListener(INTRO_COVERED_EVENT, prepare, { once: true });
+        window.addEventListener(INTRO_DONE_EVENT, play, { once: true });
       } else {
-        playNavReveal();
+        play();
       }
 
-      if (progress) {
-        gsap.to(progress, {
-          scaleX: 1,
-          ease: "none",
-          scrollTrigger: {
-            start: 0,
-            end: () => ScrollTrigger.maxScroll(window) || document.documentElement.scrollHeight - window.innerHeight,
-            scrub: 0.15,
-            invalidateOnRefresh: true,
-          },
-        });
+      if (ringRef.current) {
+        gsap.fromTo(
+          ringRef.current,
+          { strokeDashoffset: 1 },
+          {
+            strokeDashoffset: 0,
+            ease: "none",
+            scrollTrigger: {
+              start: 0,
+              end: () => ScrollTrigger.maxScroll(window) || document.documentElement.scrollHeight - window.innerHeight,
+              scrub: 0.2,
+              invalidateOnRefresh: true,
+            },
+          }
+        );
       }
 
       return () => {
         active = false;
-        window.removeEventListener(INTRO_COVERED_EVENT, prepareNavReveal);
-        window.removeEventListener(INTRO_DONE_EVENT, playNavReveal);
+        window.removeEventListener(INTRO_COVERED_EVENT, prepare);
+        window.removeEventListener(INTRO_DONE_EVENT, play);
       };
     });
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      mm.revert();
-    };
+    return () => mm.revert();
   }, []);
 
-  useEffect(() => {
-    if (!menuOpen) return;
+  // Sliding pill indicator behind the hovered (or active) nav link
+  const moveIndicator = useCallback((target: HTMLElement | null, instant = false) => {
+    const pill = indicatorRef.current;
+    if (!pill) return;
+    if (!target) {
+      gsap.to(pill, { opacity: 0, scale: 0.8, duration: 0.25, ease: "power2.out" });
+      return;
+    }
+    gsap.to(pill, {
+      x: target.offsetLeft,
+      width: target.offsetWidth,
+      opacity: 1,
+      scale: 1,
+      duration: instant ? 0 : 0.55,
+      ease: "elastic.out(1, 0.75)",
+    });
+  }, []);
+
+  const restIndicator = useCallback(
+    (instant = false) => {
+      const nav = linksRef.current;
+      const activeEl = nav?.querySelector<HTMLElement>("[data-active='true']") ?? null;
+      moveIndicator(activeEl, instant);
+    },
+    [moveIndicator]
+  );
+
+  useLayoutEffect(() => {
+    restIndicator(true);
+    const onResize = () => restIndicator(true);
+    window.addEventListener("resize", onResize);
+    document.fonts?.ready.then(() => restIndicator(true));
+    return () => window.removeEventListener("resize", onResize);
+  }, [pathname, restIndicator]);
+
+  // Menu open / close choreography
+  const openMenu = () => {
+    setMenuMounted(true);
+    setMenuOpen(true);
+  };
+
+  const closeMenu = useCallback(() => {
+    setMenuOpen(false);
+    const tl = menuTlRef.current;
+    if (tl && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      tl.timeScale(1.6).reverse();
+    } else {
+      setMenuMounted(false);
+    }
+    menuBtnRef.current?.focus();
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!menuMounted || !menuOpen) return;
+    const menu = menuRef.current;
+    if (!menu) return;
 
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && closeMenu();
+    window.addEventListener("keydown", onKey);
 
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMenuOpen(false);
-    };
-    window.addEventListener("keydown", onKeyDown);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        onReverseComplete: () => setMenuMounted(false),
+      });
+      if (reduced) {
+        tl.set("[data-wave]", { attr: { d: WAVE_FULL } }).set("[data-menu-fade]", { opacity: 1 });
+      } else {
+        tl.set(menu, { pointerEvents: "auto" })
+          .fromTo("[data-wave='a']", { attr: { d: WAVE_FLAT } }, { attr: { d: WAVE_BULGE }, duration: 0.35, ease: "power2.in" })
+          .to("[data-wave='a']", { attr: { d: WAVE_FULL }, duration: 0.35, ease: "power2.out" })
+          .fromTo("[data-wave='b']", { attr: { d: WAVE_FLAT } }, { attr: { d: WAVE_BULGE }, duration: 0.35, ease: "power2.in" }, 0.12)
+          .to("[data-wave='b']", { attr: { d: WAVE_FULL }, duration: 0.35, ease: "power2.out" }, 0.47)
+          .fromTo("[data-menu-fade]", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.04, ease: "power3.out" }, 0.55)
+          .fromTo(
+            "[data-menu-line]",
+            { yPercent: 110, rotate: 4 },
+            { yPercent: 0, rotate: 0, duration: 0.8, stagger: 0.06, ease: "expo.out" },
+            0.55
+          )
+          .fromTo("[data-menu-rule]", { scaleX: 0 }, { scaleX: 1, duration: 0.8, stagger: 0.06, ease: "expo.out" }, 0.6);
+      }
+      menuTlRef.current = tl;
+    }, menu);
 
-    const drawer = drawerRef.current;
-    if (drawer && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      const ctx = gsap.context(() => {
-        gsap.fromTo(
-          drawer,
-          { clipPath: "inset(0% 0% 100% 0%)", opacity: 0.9 },
-          {
-            clipPath: "inset(0% 0% 0% 0%)",
-            opacity: 1,
-            duration: 0.42,
-            ease: "power4.inOut",
-            clearProps: "clipPath,opacity",
-          }
-        );
-        gsap.fromTo(
-          drawer.querySelectorAll("[data-drawer-item]"),
-          { y: 26, skewY: 1.5, opacity: 0 },
-          {
-            y: 0,
-            skewY: 0,
-            opacity: 1,
-            duration: 0.44,
-            delay: 0.1,
-            stagger: 0.045,
-            ease: "power3.out",
-            clearProps: "transform,opacity",
-          }
-        );
-        gsap.fromTo(
-          drawer.querySelectorAll("[data-drawer-chrome]"),
-          { y: -10, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.34,
-            delay: 0.08,
-            stagger: 0.05,
-            ease: "power3.out",
-            clearProps: "transform,opacity",
-          }
-        );
-      }, drawer);
-      return () => {
-        document.body.style.overflow = prevOverflow;
-        window.removeEventListener("keydown", onKeyDown);
-        ctx.revert();
-      };
-    }
+    menu.querySelector<HTMLElement>("[data-menu-first]")?.focus({ preventScroll: true });
 
     return () => {
       document.body.style.overflow = prevOverflow;
-      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keydown", onKey);
+      if (!menuMountedRef.current) ctx.revert();
     };
-  }, [menuOpen]);
+  }, [menuMounted, menuOpen, closeMenu]);
+
+  useEffect(() => {
+    menuMountedRef.current = menuMounted;
+    if (!menuMounted) menuTlRef.current = null;
+  }, [menuMounted]);
+
+  const preview = MENU_ITEMS[hoverIdx];
 
   return (
     <>
-      <header ref={headerRef} className="site-nav no-print" data-scrolled={scrolled ? "true" : "false"}>
-        <div className="container site-nav__inner">
-          <Link
-            href="/"
-            data-nav-reveal
-            className="site-nav__brand"
-            aria-label={`${PROFILE.name} home`}
-            onClick={() => setMenuOpen(false)}
-          >
-            <span>Rishabh</span>
-            <span className="brand-serif">Vishwakarma</span>
+      <header
+        ref={headerRef}
+        className="site-nav no-print"
+        data-scrolled={scrolled ? "true" : "false"}
+        data-hidden={hidden && !menuOpen ? "true" : "false"}
+      >
+        <div className="site-nav__shell">
+          <Link href="/" data-nav-reveal className="site-nav__brand" aria-label={`${PROFILE.name}, home`}>
+            <BrandMark />
+            <span className="site-nav__brand-text">
+              <span>Rishabh</span>
+              <span className="brand-serif">Vishwakarma</span>
+            </span>
           </Link>
 
-          <a
-            href={`mailto:${PROFILE.email}`}
-            data-nav-reveal
-            className="hidden lg:inline-block measured text-muted hover:text-accent transition-colors"
+          <nav
+            ref={linksRef}
+            className="site-nav__links"
+            aria-label="Primary navigation"
+            onPointerLeave={() => restIndicator()}
           >
-            {PROFILE.email}
-          </a>
+            <span ref={indicatorRef} className="site-nav__indicator" aria-hidden="true" />
+            {NAV_ITEMS.map((item) => {
+              const active = isActiveRoute(pathname, item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  data-nav-reveal
+                  className="site-nav__link"
+                  data-active={active ? "true" : "false"}
+                  aria-current={active ? "page" : undefined}
+                  onPointerEnter={(e) => moveIndicator(e.currentTarget)}
+                  onFocus={(e) => moveIndicator(e.currentTarget)}
+                  onBlur={() => restIndicator()}
+                >
+                  <RollText text={item.label} />
+                </Link>
+              );
+            })}
+          </nav>
 
-          <div className="flex items-center gap-6">
-            <nav className="site-nav__links hidden md:flex" aria-label="Primary navigation">
-              {NAV_ITEMS.map((item) => {
-                const active =
-                  item.href === "/work"
-                    ? pathname.startsWith("/work")
-                    : pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    data-nav-reveal
-                    className="site-nav__link"
-                    data-active={active ? "true" : "false"}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
+          <div className="site-nav__right">
+            <span data-nav-reveal className="site-nav__status measured">
+              <span className="hero-eyebrow__dot" aria-hidden="true" />
+              <span className="site-nav__status-text">Mumbai</span>
+              <span className="text-ink">{time}</span>
+            </span>
 
             <Magnetic strength={4}>
               <button
+                ref={menuBtnRef}
                 type="button"
                 data-nav-reveal
-                className="nav-orb"
+                className="menu-btn"
                 aria-expanded={menuOpen}
-                aria-controls="editorial-nav-drawer"
-                aria-label={menuOpen ? "Close section index" : "Open section index"}
-                onClick={() => setMenuOpen((prev) => !prev)}
+                aria-controls="site-menu"
+                aria-label={menuOpen ? "Close menu" : "Open menu"}
+                onClick={() => (menuOpen ? closeMenu() : openMenu())}
               >
-                <span className="nav-orb__glyph" aria-hidden="true">
-                  <span className="nav-orb__bar" />
-                  <span className="nav-orb__bar" />
-                  <span className="nav-orb__bar" />
+                <svg className="menu-btn__ring" viewBox="0 0 48 48" aria-hidden="true">
+                  <circle cx="24" cy="24" r="22" className="menu-btn__track" />
+                  <circle ref={ringRef} cx="24" cy="24" r="22" pathLength={1} className="menu-btn__progress" />
+                </svg>
+                <span className="menu-btn__bars" aria-hidden="true">
+                  <i />
+                  <i />
                 </span>
               </button>
             </Magnetic>
           </div>
         </div>
-        <span ref={progressRef} className="site-nav__progress" aria-hidden="true" />
       </header>
 
-      {menuOpen && (
+      {menuMounted && (
         <div
-          id="editorial-nav-drawer"
-          ref={drawerRef}
-          className="nav-drawer no-print"
+          id="site-menu"
+          ref={menuRef}
+          className="menu no-print"
           role="dialog"
           aria-modal="true"
-          aria-label="Site navigation index"
+          aria-label="Site menu"
+          data-lenis-prevent
         >
-          <div className="border-b border-rule">
-            <div className="container site-nav__inner">
-              <span data-drawer-chrome className="measured text-muted">
-                Section index, Mumbai IST
+          <svg className="menu__waves" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <path data-wave="a" className="menu__wave menu__wave--a" d={WAVE_FLAT} />
+            <path data-wave="b" className="menu__wave menu__wave--b" d={WAVE_FLAT} />
+          </svg>
+
+          <div className="menu__inner container">
+            <div className="menu__top">
+              <span data-menu-fade className="measured text-muted">
+                <span className="text-accent">●</span> index / {pathname === "/" ? "home" : pathname.slice(1)}
               </span>
-              <Magnetic strength={4}>
-                <button
-                  type="button"
-                  data-drawer-chrome
-                  className="nav-orb"
-                  aria-label="Close navigation index"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  <X size={18} strokeWidth={1.75} aria-hidden="true" />
-                </button>
-              </Magnetic>
-            </div>
-          </div>
-
-          <nav className="container my-auto py-8 flex flex-col w-full" aria-label="Section links">
-            {DRAWER_LINKS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                data-drawer-item
-                className="nav-drawer__link"
-                onClick={() => setMenuOpen(false)}
-              >
-                <span className="nav-drawer__label flex items-baseline gap-6">
-                  <span className="measured text-accent">{item.index}</span>
-                  <span>{item.label}</span>
+              <button type="button" data-menu-fade className="menu-close" onClick={closeMenu} aria-label="Close menu">
+                <span className="measured">close</span>
+                <span className="menu-close__x" aria-hidden="true">
+                  <i />
+                  <i />
                 </span>
-                <ArrowUpRight
-                  size={20}
-                  strokeWidth={1.5}
-                  className="nav-drawer__arrow text-muted shrink-0"
-                  aria-hidden="true"
-                />
-              </Link>
-            ))}
-          </nav>
+              </button>
+            </div>
 
-          <div className="border-t border-rule">
-            <div className="container py-6 flex flex-wrap items-center justify-between gap-4">
-              <div data-drawer-chrome className="flex flex-wrap gap-6 text-sm">
-                <Link href="/work" className="text-link" onClick={() => setMenuOpen(false)}>
-                  All 8 projects
-                </Link>
-                <Link href="/resume" className="text-link" onClick={() => setMenuOpen(false)}>
-                  Resume
-                </Link>
-                <Link href="/contact" className="text-link" onClick={() => setMenuOpen(false)}>
-                  Contact
-                </Link>
+            <div className="menu__grid">
+              <nav className="menu__links" aria-label="Pages">
+                {MENU_ITEMS.map((item, i) => {
+                  const active = isActiveRoute(pathname, item.href);
+                  return (
+                    <div key={item.href} className="menu__item">
+                      <span data-menu-rule className="menu__rule" aria-hidden="true" />
+                      <Link
+                        href={item.href}
+                        data-menu-first={i === 0 ? "" : undefined}
+                        className="menu__link"
+                        data-active={active ? "true" : "false"}
+                        aria-current={active ? "page" : undefined}
+                        onPointerEnter={() => setHoverIdx(i)}
+                        onFocus={() => setHoverIdx(i)}
+                        onClick={closeMenu}
+                      >
+                        <span className="menu__clip">
+                          <span data-menu-line className="menu__line">
+                            <span className="menu__index measured">{item.index}</span>
+                            <RollText text={item.label} />
+                            {active && <span className="menu__here measured">you are here</span>}
+                          </span>
+                        </span>
+                        <ArrowUpRight className="menu__arrow" size={28} strokeWidth={1.25} aria-hidden="true" />
+                      </Link>
+                    </div>
+                  );
+                })}
+              </nav>
+
+              <aside className="menu__side">
+                <div data-menu-fade className="menu__preview" aria-live="polite">
+                  <svg className="menu__preview-art" viewBox="0 0 120 60" aria-hidden="true">
+                    <path d="M4 50 C 30 50, 30 10, 60 10 S 90 50, 116 50" className="menu__preview-path" pathLength={1} key={hoverIdx} />
+                    <circle r="3" className="menu__preview-dot">
+                      <animateMotion dur="2.4s" repeatCount="indefinite" path="M4 50 C 30 50, 30 10, 60 10 S 90 50, 116 50" />
+                    </circle>
+                  </svg>
+                  <p className="measured text-accent">{preview.index} / {preview.label}</p>
+                  <p key={preview.note} className="menu__preview-note">{preview.note}</p>
+                </div>
+
+                <div data-menu-fade className="menu__sections">
+                  <p className="measured text-muted">On the home page</p>
+                  <ul>
+                    {SECTION_LINKS.map((s) => (
+                      <li key={s.href}>
+                        <Link href={s.href} onClick={closeMenu} className="menu__section-link">
+                          <RollText text={s.label} />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </aside>
+            </div>
+
+            <div className="menu__bottom">
+              <div data-menu-fade className="menu__socials">
+                <a href={PROFILE.github} target="_blank" rel="noopener noreferrer" className="menu__social">
+                  <RollText text="GitHub" />
+                </a>
+                <a href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer" className="menu__social">
+                  <RollText text="LinkedIn" />
+                </a>
+                <a href={`mailto:${PROFILE.email}`} className="menu__social">
+                  <RollText text="Email" />
+                </a>
               </div>
-              <a
-                href={`mailto:${PROFILE.email}`}
-                data-drawer-chrome
-                className="bracket-btn"
-                onClick={() => setMenuOpen(false)}
-              >
-                Email me
-              </a>
+              <span data-menu-fade className="measured text-muted">
+                Mumbai · {time} IST
+              </span>
             </div>
           </div>
         </div>

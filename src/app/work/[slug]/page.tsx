@@ -124,7 +124,7 @@ export default async function CaseStudyPage({
                 Problem and design
               </h2>
               <WobbleCard tilt={5} wobble={1.1} className="rounded-xl">
-                <div className="panel p-6 flex flex-col gap-4">
+                <div data-reveal className="panel p-6 flex flex-col gap-4">
                   <div>
                     <h3 className="text-lg font-medium text-ink">Constraint</h3>
                     <p className="text-sm text-ink-2 mt-2">{project.problem}</p>
@@ -140,7 +140,7 @@ export default async function CaseStudyPage({
             <div className="lg:col-span-6 flex flex-col gap-6">
               <h2 style={{ fontSize: "var(--text-2xl)" }}>Verified engineering details</h2>
               <WobbleCard tilt={5} wobble={1.1} className="rounded-xl">
-                <ul className="panel p-6 grid gap-3 text-sm text-ink-2">
+                <ul data-reveal className="panel p-6 grid gap-3 text-sm text-ink-2">
                   {project.highlights.map((item) => (
                     <li key={item} data-case-row className="pb-3 border-b border-rule last:border-0 last:pb-0">
                       {item}
@@ -174,7 +174,7 @@ export default async function CaseStudyPage({
               </table>
             </div>
 
-            <div className="flex flex-wrap gap-2 pt-2">
+            <div data-reveal-stagger className="flex flex-wrap gap-2 pt-2">
               {project.stack.map((item) => (
                 <span key={item} className="chip">
                   {item}

@@ -28,7 +28,7 @@ export const PROFILE = {
   role: "Full-Stack & Systems Engineer",
   headline: "Full-stack systems, Win32 to AI DAGs",
   subhead:
-    "TypeScript, AI workflows, and Windows systems in Mumbai.",
+    "I'm Rishabh, a full-stack & systems engineer in Mumbai. I take products from native Windows internals to multi-LLM pipelines, and ship them production-ready.",
   availability: "Open to full-time software engineering roles and select freelance systems work.",
   location: "Mumbai, Maharashtra, India",
   email: "111rishwakarma@gmail.com",
@@ -36,6 +36,19 @@ export const PROFILE = {
   linkedin: "https://www.linkedin.com/in/rpxexe",
   legacyPortfolio: "https://rpxexe.github.io/Rishabh",
   resumePdfPath: "/resume.pdf",
+  /**
+   * About-section portrait. Swap in your own media:
+   *  - photo: drop e.g. `portrait.jpg` (4:5 crop, at least 900x1125) into public/me/
+   *           then set { kind: "image", src: "/me/portrait.jpg" }
+   *  - video: drop a short muted loop `intro.mp4` (4:5, under ~4 MB) plus a poster frame
+   *           then set { kind: "video", src: "/me/intro.mp4", poster: "/me/portrait.jpg" }
+   */
+  portrait: {
+    kind: "image" as "image" | "video",
+    src: "/me/portrait-placeholder.svg",
+    poster: undefined as string | undefined,
+    alt: "Portrait of Rishabh Vishwakarma",
+  },
   summary:
     "B.Sc. IT graduate (CGPI 8.70/10) with 1.5 years of production web engineering experience across TypeScript, React, Next.js, Node.js, relational and document databases, LLM orchestration, and cross-layer desktop systems.",
   experience: [

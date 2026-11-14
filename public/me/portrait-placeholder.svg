@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+  <!-- Placeholder portrait: replace with your own photo at public/me/ and update PROFILE.portrait -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0" stop-color="#1b2430"/>
+      <stop offset="1" stop-color="#0a0e14"/>
+    </linearGradient>
+    <radialGradient id="rim" cx="0.5" cy="0.38" r="0.55">
+      <stop offset="0" stop-color="#3ce8b2" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#3ce8b2" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a4553"/>
+      <stop offset="1" stop-color="#1a212b"/>
+    </linearGradient>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.4" fill="#ffffff" fill-opacity="0.07"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="1000" fill="url(#bg)"/>
+  <rect width="800" height="1000" fill="url(#dots)"/>
+  <rect width="800" height="1000" fill="url(#rim)"/>
+  <!-- shoulders -->
+  <path d="M110 1000 C 130 790, 250 700, 400 700 S 670 790, 690 1000 Z" fill="url(#body)"/>
+  <!-- neck -->
+  <path d="M345 600 h110 v120 c0 30 -110 30 -110 0 z" fill="#2c3540"/>
+  <!-- head -->
+  <ellipse cx="400" cy="460" rx="150" ry="180" fill="#3a4553"/>
+  <!-- hair -->
+  <path d="M250 440 C 245 300, 330 255, 405 258 C 500 260, 560 320, 552 440 C 530 380, 470 350, 400 350 C 330 350, 275 380, 250 440 Z" fill="#20272f"/>
+  <!-- outline accent -->
+  <ellipse cx="400" cy="460" rx="150" ry="180" fill="none" stroke="#3ce8b2" stroke-opacity="0.35" stroke-width="2" stroke-dasharray="6 10"/>
+  <text x="400" y="920" text-anchor="middle" font-family="ui-monospace, monospace" font-size="26" fill="#ffffff" fill-opacity="0.35" letter-spacing="4">YOUR PHOTO HERE</text>
+</svg>

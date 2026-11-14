@@ -3,6 +3,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import Lenis from "lenis";
+import { isLite } from "@/lib/motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -16,7 +17,8 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
     document.documentElement.classList.add("js");
 
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) {
+    // Touch/lite devices keep native momentum scrolling: smoother and cheaper than JS smoothing
+    if (prefersReducedMotion || isLite()) {
       return;
     }
 
