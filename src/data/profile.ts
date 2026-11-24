@@ -35,6 +35,7 @@ export const PROFILE = {
   github: "https://github.com/rpxexe",
   linkedin: "https://www.linkedin.com/in/rpxexe",
   legacyPortfolio: "https://rpxexe.github.io/Rishabh",
+  sourceRepo: "https://github.com/rpxexe/portfolio",
   resumePdfPath: "/resume.pdf",
   /**
    * About-section portrait. Swap in your own media:
@@ -45,7 +46,7 @@ export const PROFILE = {
    */
   portrait: {
     kind: "image" as "image" | "video",
-    src: "/me/portrait-placeholder.svg",
+    src: "/me/portrait.jpg",
     poster: undefined as string | undefined,
     alt: "Portrait of Rishabh Vishwakarma",
   },

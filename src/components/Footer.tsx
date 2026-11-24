@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { PROFILE } from "@/data/profile";
+import { DevToggle } from "@/components/DevPanels";
 
 export function Footer() {
   return (
-    <footer className="border-t border-rule bg-paper-3 pt-14 pb-10 no-print">
+    <footer className="border-t border-rule bg-paper-3 pt-14 pb-10 no-print" data-src="src/components/Footer.tsx">
       <div className="container flex flex-col gap-12">
         <div data-reveal className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-rule">
           <p className="text-sm text-ink-2">
@@ -22,6 +23,9 @@ export function Footer() {
             </Link>
             <Link href="/contact" className="text-link">
               Contact
+            </Link>
+            <Link href="/changelog" className="text-link">
+              Changelog
             </Link>
             <a href={PROFILE.github} target="_blank" rel="noopener noreferrer" className="text-link">
               GitHub
@@ -56,7 +60,17 @@ export function Footer() {
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-muted">
           <span>Full-Stack &amp; Systems Engineering Portfolio</span>
-          <span className="measured">Next.js 16, GSAP, Lenis, React Bits</span>
+          <span className="flex flex-wrap items-center gap-4">
+            <DevToggle panel="monitor">
+              <kbd className="measured">`</kbd> task manager
+            </DevToggle>
+            <DevToggle panel="source">
+              <kbd className="measured">\</kbd> view source
+            </DevToggle>
+            <DevToggle panel="help">
+              <kbd className="measured">?</kbd> all shortcuts
+            </DevToggle>
+          </span>
         </div>
       </div>
     </footer>

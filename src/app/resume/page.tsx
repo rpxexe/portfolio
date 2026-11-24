@@ -25,7 +25,7 @@ export default function ResumePage() {
   const resumeProjects = FEATURED_PROJECTS.slice(0, 4);
 
   return (
-    <section className="resume band-section--tight" aria-labelledby="resume-heading">
+    <section className="resume band-section--tight" data-src="src/app/resume/page.tsx" aria-labelledby="resume-heading">
       <div className="container">
         <header className="resume__hero">
           <div className="resume__hero-main">

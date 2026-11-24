@@ -1,0 +1,262 @@
+[
+  {
+    "hash": "cdf7db2b52053cc91e8b07e281fd381afacd4a4d",
+    "date": "2026-10-06T16:08:58+05:30",
+    "subject": "Initial commit from Create Next App",
+    "additions": 309,
+    "deletions": 0,
+    "filesChanged": 16,
+    "files": [
+      {
+        "path": "src/app/page.tsx",
+        "add": 69,
+        "del": 0
+      },
+      {
+        "path": ".gitignore",
+        "add": 41,
+        "del": 0
+      },
+      {
+        "path": "README.md",
+        "add": 36,
+        "del": 0
+      },
+      {
+        "path": "package.json",
+        "add": 36,
+        "del": 0
+      },
+      {
+        "path": "tsconfig.json",
+        "add": 34,
+        "del": 0
+      },
+      {
+        "path": "src/app/layout.tsx",
+        "add": 29,
+        "del": 0
+      },
+      {
+        "path": "src/app/globals.css",
+        "add": 26,
+        "del": 0
+      },
+      {
+        "path": "eslint.config.mjs",
+        "add": 18,
+        "del": 0
+      }
+    ]
+  },
+  {
+    "hash": "8fca18c424e2343e1b5d06acfeb3b7946576a4ff",
+    "date": "2026-11-12T10:34:44+05:30",
+    "subject": "Build kinetic portfolio with GSAP, React Bits, Mascot companion, and updated README",
+    "additions": 7721,
+    "deletions": 113,
+    "filesChanged": 41,
+    "files": [
+      {
+        "path": "src/app/globals.css",
+        "add": 1094,
+        "del": 16
+      },
+      {
+        "path": "src/components/HomeSections.tsx",
+        "add": 906,
+        "del": 0
+      },
+      {
+        "path": "src/components/MascotCompanion.tsx",
+        "add": 749,
+        "del": 0
+      },
+      {
+        "path": "src/components/DecryptedText.tsx",
+        "add": 641,
+        "del": 0
+      },
+      {
+        "path": "src/components/CountUp.tsx",
+        "add": 500,
+        "del": 0
+      },
+      {
+        "path": "src/data/projects.ts",
+        "add": 351,
+        "del": 0
+      },
+      {
+        "path": "src/components/SpotlightCard.tsx",
+        "add": 340,
+        "del": 0
+      },
+      {
+        "path": "src/components/Hero.tsx",
+        "add": 297,
+        "del": 0
+      }
+    ]
+  },
+  {
+    "hash": "2666ad7a688503e60b216a02bd6e00436db79b4c",
+    "date": "2026-11-12T16:40:27+05:30",
+    "subject": "Fix GSAP pin unmount cleanup, animate navbar, and align fullscreen nav drawer",
+    "additions": 392,
+    "deletions": 109,
+    "filesChanged": 4,
+    "files": [
+      {
+        "path": "src/components/Navbar.tsx",
+        "add": 197,
+        "del": 48
+      },
+      {
+        "path": "src/app/globals.css",
+        "add": 144,
+        "del": 20
+      },
+      {
+        "path": "src/components/HomeSections.tsx",
+        "add": 43,
+        "del": 37
+      },
+      {
+        "path": "src/components/CaseStudyMotion.tsx",
+        "add": 8,
+        "del": 4
+      }
+    ]
+  },
+  {
+    "hash": "96e9c973ab1b7d75ad5a7334fa80210d91007a89",
+    "date": "2026-11-15T02:05:05+05:30",
+    "subject": "Redesign site with new motion system, IDE projects, and mobile lite mode",
+    "additions": 7285,
+    "deletions": 2587,
+    "filesChanged": 32,
+    "files": [
+      {
+        "path": "src/app/globals.css",
+        "add": 4239,
+        "del": 563
+      },
+      {
+        "path": "src/components/MascotCompanion.tsx",
+        "add": 0,
+        "del": 749
+      },
+      {
+        "path": "src/components/Navbar.tsx",
+        "add": 355,
+        "del": 228
+      },
+      {
+        "path": "src/components/ContactForm.tsx",
+        "add": 233,
+        "del": 203
+      },
+      {
+        "path": "src/components/HomeSections.tsx",
+        "add": 59,
+        "del": 360
+      },
+      {
+        "path": "src/components/WorkCatalog.tsx",
+        "add": 170,
+        "del": 147
+      },
+      {
+        "path": "src/components/Hero.tsx",
+        "add": 191,
+        "del": 117
+      },
+      {
+        "path": "src/components/ProjectIDE.tsx",
+        "add": 299,
+        "del": 0
+      }
+    ]
+  },
+  {
+    "hash": "b86a04a777232a2e19144e12828175d9c5d7607e",
+    "date": "2026-11-15T02:14:23+05:30",
+    "subject": "Redesign principles and proof sections, add site icon, rename RV to Risu",
+    "additions": 1031,
+    "deletions": 1167,
+    "filesChanged": 13,
+    "files": [
+      {
+        "path": "src/app/globals.css",
+        "add": 582,
+        "del": 108
+      },
+      {
+        "path": "src/components/CountUp.tsx",
+        "add": 0,
+        "del": 500
+      },
+      {
+        "path": "src/components/SpotlightCard.tsx",
+        "add": 0,
+        "del": 340
+      },
+      {
+        "path": "src/components/ProofSection.tsx",
+        "add": 255,
+        "del": 0
+      },
+      {
+        "path": "src/components/HomeSections.tsx",
+        "add": 9,
+        "del": 211
+      },
+      {
+        "path": "src/components/PrinciplesPanels.tsx",
+        "add": 134,
+        "del": 0
+      },
+      {
+        "path": "src/app/apple-icon.tsx",
+        "add": 36,
+        "del": 0
+      },
+      {
+        "path": "src/components/Navbar.tsx",
+        "add": 5,
+        "del": 5
+      }
+    ]
+  },
+  {
+    "hash": "da90d5cff19c88f2492fad7423617bd5ef3ba7b8",
+    "date": "2026-11-15T02:18:51+05:30",
+    "subject": "Redesign navbar logo as animated R mark + \"risu\" wordmark",
+    "additions": 245,
+    "deletions": 71,
+    "filesChanged": 4,
+    "files": [
+      {
+        "path": "src/app/globals.css",
+        "add": 159,
+        "del": 54
+      },
+      {
+        "path": "src/components/Logo.tsx",
+        "add": 83,
+        "del": 0
+      },
+      {
+        "path": "src/components/Navbar.tsx",
+        "add": 2,
+        "del": 16
+      },
+      {
+        "path": "src/components/PageLoader.tsx",
+        "add": 1,
+        "del": 1
+      }
+    ]
+  }
+]

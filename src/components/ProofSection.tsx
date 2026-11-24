@@ -118,7 +118,7 @@ export function ProofSection() {
   const repoNodes = PROJECTS.map((p, i) => ({ slug: p.slug, x: 14 + (i % 4) * 30, y: i < 4 ? 16 : 44 }));
 
   return (
-    <div ref={rootRef} className="proof" data-anim-zone>
+    <div ref={rootRef} className="proof" data-src="src/components/ProofSection.tsx" data-anim-zone>
       <div className="proof__gauges">
         <figure className="gauge">
           <svg viewBox="0 0 100 100" className="gauge__svg" aria-hidden="true">
@@ -245,7 +245,7 @@ export function ProofSection() {
           <Link href="/resume" className="pcard__link">
             Full resume <ArrowUpRight size={14} strokeWidth={1.75} aria-hidden="true" />
           </Link>
-          <a href={PROFILE.resumePdfPath} download className="pcard__link">
+          <a href={PROFILE.resumePdfPath} download="Rishabh-Vishwakarma-Resume.pdf" className="pcard__link">
             Download PDF <Download size={14} strokeWidth={1.75} aria-hidden="true" />
           </a>
         </div>

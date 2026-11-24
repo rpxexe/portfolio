@@ -85,7 +85,7 @@ export function PrinciplesPanels() {
   }, [active, seen]);
 
   return (
-    <div ref={rootRef} className="pp" data-anim-zone>
+    <div ref={rootRef} className="pp" data-src="src/components/PrinciplesPanels.tsx" data-anim-zone>
       {PRINCIPLES.map((p, i) => {
         const isOpen = i === active;
         return (

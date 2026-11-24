@@ -149,7 +149,7 @@ export function ProjectIDE() {
   }, [active]);
 
   return (
-    <div ref={rootRef} className="ide" data-visible="false" data-anim-zone>
+    <div ref={rootRef} className="ide" data-src="src/components/ProjectIDE.tsx" data-visible="false" data-anim-zone>
       {/* Title bar */}
       <div className="ide__titlebar">
         <span className="pcard__dots" aria-hidden="true">
