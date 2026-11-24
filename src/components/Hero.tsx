@@ -220,7 +220,7 @@ export function Hero() {
   const phrase = HERO_LOOP_PHRASES[phraseIdx];
 
   return (
-    <section ref={rootRef} className="hero-section" aria-labelledby="hero-heading" data-anim-zone>
+    <section ref={rootRef} className="hero-section" data-src="src/components/Hero.tsx" aria-labelledby="hero-heading" data-anim-zone>
       <div className="container stage-grid relative z-10">
         <div ref={copyColRef} className="copy-col">
           <div className="hero-eyebrow measured" data-hero-item>

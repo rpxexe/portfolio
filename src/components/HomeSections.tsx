@@ -14,6 +14,7 @@ import { Portrait } from "@/components/Portrait";
 import { PrinciplesPanels } from "@/components/PrinciplesPanels";
 import { ProofSection } from "@/components/ProofSection";
 import { SkillsShowcase } from "@/components/SkillsShowcase";
+import { AskWork } from "@/components/AskWork";
 import { PROFILE } from "@/data/profile";
 import { isLite } from "@/lib/motion";
 import { PROJECTS } from "@/data/projects";
@@ -55,7 +56,8 @@ const FAQ_ITEMS = [
   },
 ];
 
-export function HomeSections() {
+/** `pulse` is a server-rendered slot (GitHub activity), passed in because this is a client component. */
+export function HomeSections({ pulse }: { pulse?: React.ReactNode }) {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [openFaq, setOpenFaq] = useState<string | null>(null);
 
@@ -195,7 +197,7 @@ export function HomeSections() {
   return (
     <>
       {/* 01: Introduction with Rotated Rail */}
-      <section id="introduction" className="band-section band-section--raised" aria-labelledby="intro-heading">
+      <section id="introduction" className="band-section band-section--raised" data-src="src/components/HomeSections.tsx" aria-labelledby="intro-heading">
         <div className="container">
           <div className="editorial-grid">
             <span className="editorial-rail" aria-hidden="true">
@@ -212,12 +214,15 @@ export function HomeSections() {
                     <span className="text-muted">From C# Win32 hooks to durable AI pipelines.</span>
                   </p>
 
-                  <div data-reveal>
+                  <div data-reveal className="flex flex-wrap items-center gap-5">
                     <Magnetic strength={3}>
                       <Link href="/resume" className="bracket-btn shrink-0">
                         Resume
                       </Link>
                     </Magnetic>
+                    <a href={PROFILE.resumePdfPath} download="Rishabh-Vishwakarma-Resume.pdf" className="text-link text-sm">
+                      Download PDF
+                    </a>
                   </div>
                 </div>
 
@@ -273,7 +278,7 @@ export function HomeSections() {
       </section>
 
       {/* Kinetic Typography + Pauseable Stack Marquee */}
-      <section className="kinetic-band" aria-label="Core engineering capabilities">
+      <section className="kinetic-band" data-src="src/components/HomeSections.tsx" aria-label="Core engineering capabilities">
         <div ref={kineticTopRef} className="kinetic-track text-ink">
           <span>ELECTRON</span>
           <span className="serif-flourish text-accent">WebRTC</span>
@@ -331,13 +336,14 @@ export function HomeSections() {
               </div>
 
               <ProofSection />
+              {pulse}
             </div>
           </div>
         </div>
       </section>
 
       {/* 06: Interactive FAQ Accordion + Direct Contact */}
-      <section id="faq" className="band-section band-section--raised" aria-labelledby="faq-heading">
+      <section id="faq" className="band-section band-section--raised" data-src="src/components/HomeSections.tsx" aria-labelledby="faq-heading">
         <div className="container">
           <div className="editorial-grid">
             <span className="editorial-rail" aria-hidden="true">
@@ -376,6 +382,8 @@ export function HomeSections() {
                   );
                 })}
               </div>
+
+              <AskWork />
 
               <div data-reveal className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pt-4">
                 <div>

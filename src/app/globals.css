@@ -5481,3 +5481,43 @@
     break-inside: avoid;
   }
 }
+
+/* Ask-my-work pipeline + GitHub pulse motion (global reduced-motion guard in base.css applies) */
+@layer components {
+  .ask-node {
+    position: relative;
+    transition: border-color var(--dur-long) var(--ease-out), background-color var(--dur-long) var(--ease-out);
+  }
+  .ask-node[data-reached="true"] { animation: ask-pop var(--dur-long) var(--ease-out); }
+  /* Light sweeping the bottom edge while a stage runs (a background, so nothing overflows) */
+  .ask-node[data-active="true"] {
+    background-image: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+    background-size: 50% 2px;
+    background-repeat: no-repeat;
+    animation: ask-scan 0.9s var(--ease-in-out) infinite;
+  }
+  /* Wire between nodes fills left to right once the next stage is reached */
+  @media (min-width: 40rem) {
+    .ask-node + .ask-node::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: calc(-0.5rem - 1px);
+      width: 0.5rem;
+      height: 1px;
+      background: var(--color-accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform var(--dur-long) var(--ease-out);
+    }
+    .ask-node[data-reached="true"] + .ask-node[data-reached="true"]::before { transform: scaleX(1); }
+  }
+  .ask-in { animation: ask-in 600ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 60ms); }
+
+  @keyframes ask-pop { 0% { transform: scale(0.97); } 55% { transform: scale(1.02); } 100% { transform: none; } }
+  @keyframes ask-scan { from { background-position: -100% 100%; } to { background-position: 200% 100%; } }
+  @keyframes ask-in { from { opacity: 0; transform: translateY(8px); filter: blur(4px); } }
+
+  .pulse-card { transition: border-color var(--dur-short) var(--ease-out), transform var(--dur-short) var(--ease-out); }
+  .pulse-card:hover { border-color: var(--color-accent); transform: translateY(-3px); }
+}

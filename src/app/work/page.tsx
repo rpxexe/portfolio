@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { WorkCatalog } from "@/components/WorkCatalog";
+import { FitLens } from "@/components/FitLens";
 import { PROFILE } from "@/data/profile";
 import { SectionHeading } from "@/components/SectionHeading";
 
@@ -19,6 +20,8 @@ export default function WorkPage() {
             Ranked from native Windows protocols to multi-LLM orchestration and SaaS platforms.
           </p>
         </div>
+
+        <FitLens />
 
         <WorkCatalog />
       </div>

@@ -135,7 +135,7 @@ export function WorkCatalog() {
   }, []);
 
   return (
-    <div ref={containerRef} className="catalog" data-anim-zone>
+    <div ref={containerRef} className="catalog" data-src="src/components/WorkCatalog.tsx" data-anim-zone>
       <div className="catalog__bar">
         <div ref={filterBarRef} className="catalog__filters" role="tablist" aria-label="Filter projects by engineering layer">
           <span ref={pillRef} className="catalog__pill" aria-hidden="true" />

@@ -8,6 +8,7 @@ import { ScrollProgressSpine } from "@/components/ScrollProgressSpine";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SiteMotion } from "@/components/SiteMotion";
+import { DevPanels } from "@/components/DevPanels";
 import { PROFILE } from "@/data/profile";
 
 // Display: characterful variable grotesk with optical sizing for big headlines
@@ -76,6 +77,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Footer />
           </div>
           <SiteMotion />
+          <DevPanels />
         </SmoothScrollProvider>
       </body>
     </html>

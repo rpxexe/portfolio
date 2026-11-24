@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/snapshot-history.mjs && next build",
+    "history": "node scripts/snapshot-history.mjs",
+    "selfcheck": "bun scripts/selfcheck.ts",
     "start": "next start",
     "lint": "eslint"
   },

@@ -42,7 +42,7 @@ export default async function CaseStudyPage({
 
   return (
     <CaseStudyMotion>
-      <article className="band-section--tight" aria-labelledby="case-heading">
+      <article className="band-section--tight" data-src="src/app/work/[slug]/page.tsx" aria-labelledby="case-heading">
         <div className="container flex flex-col gap-14">
           <div className="flex flex-col gap-6">
             <Link href="/work" data-case-hero className="inline-flex items-center gap-2 text-sm text-link w-fit">

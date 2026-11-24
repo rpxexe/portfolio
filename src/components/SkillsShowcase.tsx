@@ -97,7 +97,7 @@ export function SkillsShowcase() {
   }, []);
 
   return (
-    <section id="skills" className="skills-section" aria-labelledby="skills-heading" data-anim-zone>
+    <section id="skills" className="skills-section" data-src="src/components/SkillsShowcase.tsx" aria-labelledby="skills-heading" data-anim-zone>
       <div className="container skills-head">
         <SectionHeading index="03" kicker="toolbox" title="The *stack* behind it" id="skills-heading" align="center" />
         <p data-reveal className="lead text-ink-2">
