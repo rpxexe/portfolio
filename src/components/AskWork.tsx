@@ -90,7 +90,7 @@ export function AskWork() {
       id: "generate",
       label: "generate",
       detail:
-        ms.generate !== undefined ? `${model ?? "no model"}, ${Math.round(ms.generate)} ms` : phase === "generate" ? "waiting on Gemini…" : "Gemini, cited",
+        ms.generate !== undefined ? `${model ?? "no model"}, ${Math.round(ms.generate)} ms` : phase === "generate" ? "waiting on the model…" : "LLM, cited",
     },
     { id: "done", label: "answer", detail: phase === "error" ? "fell back to sources" : "with citations" },
   ];

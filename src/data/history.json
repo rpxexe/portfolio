@@ -258,5 +258,55 @@
         "del": 1
       }
     ]
+  },
+  {
+    "hash": "67c23fbed40729cd07c6627b23508d53a2857e27",
+    "date": "2026-11-24T20:57:12+05:30",
+    "subject": "Add standout portfolio features, real portrait, and resume download links",
+    "additions": 1429,
+    "deletions": 19,
+    "filesChanged": 32,
+    "files": [
+      {
+        "path": "src/components/DevPanels.tsx",
+        "add": 305,
+        "del": 0
+      },
+      {
+        "path": "src/components/AskWork.tsx",
+        "add": 184,
+        "del": 0
+      },
+      {
+        "path": "src/lib/match.ts",
+        "add": 147,
+        "del": 0
+      },
+      {
+        "path": "src/components/TimeMachine.tsx",
+        "add": 117,
+        "del": 0
+      },
+      {
+        "path": "src/components/FitLens.tsx",
+        "add": 98,
+        "del": 0
+      },
+      {
+        "path": "src/components/GitHubPulse.tsx",
+        "add": 94,
+        "del": 0
+      },
+      {
+        "path": "src/app/api/ask/route.ts",
+        "add": 74,
+        "del": 0
+      },
+      {
+        "path": "src/app/work/[slug]/opengraph-image.tsx",
+        "add": 71,
+        "del": 0
+      }
+    ]
   }
 ]

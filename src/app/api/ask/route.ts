@@ -1,6 +1,6 @@
 import { retrieve } from "@/lib/match";
 
-const MODEL = process.env.GEMINI_MODEL ?? "gemini-2.5-flash";
+const MODEL = process.env.OPENROUTER_MODEL;
 const MAX_QUESTION = 300;
 const WINDOW_MS = 10 * 60_000;
 const MAX_PER_WINDOW = 8;
@@ -44,31 +44,43 @@ export async function POST(req: Request) {
     return Response.json({ answer: "Nothing in Rishabh's projects or resume covers that.", sources, model: null });
   }
 
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) return Response.json({ error: "AI is offline. Showing the matching sources instead.", sources }, { status: 503 });
+  const key = process.env.OPENROUTER_API_KEY;
+  if (!key || !MODEL) {
+    return Response.json({ error: "AI is offline. Showing the matching sources instead.", sources }, { status: 503 });
+  }
 
   const context = sources.map((s, i) => `[${i + 1}] (${s.label}) ${s.text}`).join("\n");
   try {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
+    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
-      headers: { "content-type": "application/json", "x-goog-api-key": key },
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${key}`,
+        "x-title": "risu portfolio",
+      },
       body: JSON.stringify({
-        systemInstruction: { parts: [{ text: SYSTEM }] },
-        contents: [{ role: "user", parts: [{ text: `Sources:\n${context}\n\nQuestion: ${question}` }] }],
-        generationConfig: { temperature: 0.2, maxOutputTokens: 400, thinkingConfig: { thinkingBudget: 0 } },
+        model: MODEL,
+        messages: [
+          { role: "system", content: SYSTEM },
+          { role: "user", content: `Sources:\n${context}\n\nQuestion: ${question}` },
+        ],
+        temperature: 0.2,
+        max_tokens: 400,
+        // Reasoning models would otherwise spend the token budget thinking; ignored by models without it
+        reasoning: { effort: "low", exclude: true },
       }),
-      signal: AbortSignal.timeout(20_000),
+      signal: AbortSignal.timeout(25_000),
     });
     if (!res.ok) {
-      console.error("gemini", res.status, (await res.text()).slice(0, 300));
+      console.error("openrouter", res.status, (await res.text()).slice(0, 300));
       return Response.json({ error: "The model did not answer. Showing the matching sources instead.", sources }, { status: 502 });
     }
-    const data = (await res.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
-    const answer = data.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("").trim();
+    const data = (await res.json()) as { model?: string; choices?: { message?: { content?: string | null } }[] };
+    const answer = data.choices?.[0]?.message?.content?.trim();
     if (!answer) return Response.json({ error: "Empty answer. Showing the matching sources instead.", sources }, { status: 502 });
-    return Response.json({ answer, sources, model: MODEL });
+    return Response.json({ answer, sources, model: data.model ?? MODEL });
   } catch (err) {
-    console.error("gemini", err);
+    console.error("openrouter", err instanceof Error ? `${err.name}: ${err.message}` : err);
     return Response.json({ error: "The model timed out. Showing the matching sources instead.", sources }, { status: 504 });
   }
 }
